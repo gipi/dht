@@ -8,7 +8,7 @@ def s2ip(data):
     return '.'.join([str(int(x.encode('hex'), 16)) for x in data])
 
 def bt_contact_node(raw_data):
-    '''Contact information for nodes is encoded as 26 bits string.
+    '''Contact information for nodes is encoded as 26 bytes string.
     
      - 20 bytes node id
      - 4  bytes node ip
