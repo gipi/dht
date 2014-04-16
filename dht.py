@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import json
 import bencode
 import random
 import socket
@@ -7,6 +8,18 @@ import socket
 def generate_random_id():
     # Generate a 160-bit (20-byte) random node ID.
     return ''.join([chr(random.randint(0, 255)) for _ in range(20)])
+
+def send_to_bootstrap_node(data):
+    data_bencoded = bencode.bencode(data)
+
+    # Send a datagram to a server and recieve a response.
+    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+    s.sendto(data_bencoded,
+             (socket.gethostbyname('router.bittorrent.com'), 6881))
+
+    r = s.recvfrom(1024)
+
+    return bencode.bdecode(r[0])
 
 def bootstrap(_id):
 
@@ -20,24 +33,22 @@ def bootstrap(_id):
                   't': '0f',
                   'q': 'ping',
                   'a': {'id': _id}}
-    ping_query_bencoded = bencode.bencode(ping_query)
 
-    # Send a datagram to a server and recieve a response.
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
-    s.sendto(ping_query_bencoded,
-             (socket.gethostbyname('router.bittorrent.com'), 6881))
+    get_peers_query = {
+        'y': 'q',
+        't': '0f',
+        'q': 'get_peers',
+        'a': {
+            'id': _id,
+            'info_hash': 'bbb6db69965af769f664b6636e7914f8735141b3',
+        }
+    }
 
-    import ipdb;ipdb.set_trace()
-    r = s.recvfrom(1024)
+    send_to_bootstrap_node(ping_query)
 
-    '''
-    The ping response contains in the 'ip' field the 4 bytes with the ip
-    value followed by the port indicated with 2 bytes.
-    '''
-    ping_response = bencode.bdecode(r[0])
+    response = send_to_bootstrap_node(get_peers_query)
 
-    print(ping_response)
-    print r[1]
+
 
 if __name__ == "__main__":
     my_id = generate_random_id()
