@@ -3,7 +3,15 @@ import json
 import bencode
 import random
 import socket
+import logging
 
+stream = logging.StreamHandler()
+formatter = logging.Formatter('%(levelname)s - %(filename)s:%(lineno)d - %(message)s')
+
+logger = logging.getLogger(__file__)
+logger.setLevel(logging.DEBUG)
+logger.addHandler(stream)
+stream.setFormatter(formatter)
 
 def generate_random_id():
     # Generate a 160-bit (20-byte) random node ID.
