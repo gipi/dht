@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+import sys
 import json
 import bencode
 import random
@@ -62,6 +63,8 @@ def bootstrap(_id):
     response = send_to_node(Node.get_boostrap_node(), ping_query)
 
     print(response)
+
+def get_peers(_id, node, info_hash):
     get_peers_query = {
         'y': 'q',
         't': '0f',
@@ -71,11 +74,16 @@ def bootstrap(_id):
             'info_hash': hex2byte(info_hash),
         }
     }
-
-
+    logger.info('asking to \'%s\' for peers related to hash \'%s\'' % (node, info_hash))
+    return send_to_node(node, get_peers_query)
 
 
 if __name__ == "__main__":
     my_id = generate_random_id()
     print('id: ' + my_id.encode('hex'))
+
     bootstrap(my_id)
+
+    info_hash = 'bbb6db69965af769f664b6636e7914f8735141b3' if len(sys.argv) == 1 else sys.argv[1]
+
+    peers_result = get_peers(my_id, Node.get_boostrap_node(), info_hash)
