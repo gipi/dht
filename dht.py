@@ -3,6 +3,7 @@ import json
 import bencode
 import random
 import socket
+from utils import hex2byte
 import logging
 
 stream = logging.StreamHandler()
@@ -48,7 +49,7 @@ def bootstrap(_id):
         'q': 'get_peers',
         'a': {
             'id': _id,
-            'info_hash': 'bbb6db69965af769f664b6636e7914f8735141b3',
+            'info_hash': hex2byte(info_hash),
         }
     }
 

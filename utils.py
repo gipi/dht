@@ -7,6 +7,14 @@ def chunks(l, n):
 def s2ip(data):
     return '.'.join([str(int(x.encode('hex'), 16)) for x in data])
 
+def hex2byte(data):
+    '''Returns the raw bytes from an hex encoded string
+    
+        >>> hex2byte('0001414243ba')
+        '\\x00\\x01ABC\\xba'
+    '''
+    return ''.join([chr(int(x, 16)) for x in chunks(data, 2)])
+
 def bt_contact_node(raw_data):
     '''Contact information for nodes is encoded as 26 bytes string.
     
