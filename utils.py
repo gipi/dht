@@ -1,3 +1,5 @@
+from models import Node
+
 def chunks(l, n):
     if n < 1:
         n = 1
@@ -26,4 +28,4 @@ def bt_contact_node(raw_data):
     node_ip = s2ip(raw_data[20:24])
     node_port = int(raw_data[24:].encode('hex'), 16)
 
-    return node_id, node_ip, node_port
+    return Node(id=node_id, ip=node_ip, port=node_port)
