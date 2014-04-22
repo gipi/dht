@@ -65,7 +65,10 @@ class NodeResponse(Response):
         self.nodes = nodes
 
 class DHT(object):
-    '''This represents the Distributed Hash Table with its own queries'''
+    '''This represents the Distributed Hash Table with its own queries
+    
+    See <www.bittorrent.org/beps/bep_0003.html>
+    '''
 
     def __init__(self, bootstrap=None):
         pass
