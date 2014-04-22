@@ -28,3 +28,8 @@ class Peer(object):
         self.ip = ip
         self.port = port
 
+    def __unicode__(self):
+        return u'%s %d' % (self.ip, self.port)
+
+    def __str__(self):
+        return self.__unicode__()
