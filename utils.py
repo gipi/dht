@@ -1,4 +1,4 @@
-from models import Node
+from models import Node, Peer
 
 def chunks(l, n):
     if n < 1:
@@ -40,4 +40,4 @@ def bt_contact_peer(raw_data):
     node_ip = s2ip(raw_data[0:4])
     node_port = int(raw_data[4:].encode('hex'), 16)
 
-    return node_ip, node_port
+    return Peer(node_ip, node_port)
