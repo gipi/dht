@@ -70,8 +70,8 @@ class DHT(object):
     See <www.bittorrent.org/beps/bep_0003.html>
     '''
 
-    def __init__(self, bootstrap=None):
-        pass
+    def __init__(self, network):
+        self.network = network
 
     def ping(self, _id):
 # Create ping query and bencode it.
@@ -85,7 +85,7 @@ class DHT(object):
                       'q': 'ping',
                       'a': {'id': _id}}
 
-        return Network.send_to_node(Node.get_boostrap_node(), ping_query)
+        return self.network.send_to_node(Node.get_boostrap_node(), ping_query)
 
     def get_peers(self, _id, node, info_hash):
         get_peers_query = {
@@ -98,7 +98,7 @@ class DHT(object):
             }
         }
         logger.info('asking to \'%s\' for peers related to hash \'%s\'' % (node, info_hash))
-        return Network.send_to_node(node, get_peers_query)
+        response = self.network.send_to_node(node, get_peers_query)
 
     def find_node(self, _id, target):
         raise NotImplementedError('find_node is not implemented')
@@ -110,7 +110,7 @@ if __name__ == "__main__":
     my_id = generate_random_id()
     print('id: ' + my_id.encode('hex'))
 
-    dht = DHT()
+    dht = DHT(Network)
 
     info_hash = 'bbb6db69965af769f664b6636e7914f8735141b3' if len(sys.argv) == 1 else sys.argv[1]
 
