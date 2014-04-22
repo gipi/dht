@@ -51,6 +51,19 @@ class Network(object):
             logger.error('error for query \'%s\'' % data)
             return r
 
+class Response(object):
+    '''Base class for DHT network response'''
+    pass
+
+class PeerResponse(Response):
+    def __init__(self, peers):
+        '''peers is a list of peers'''
+        self.peers = peers
+
+class NodeResponse(Response):
+    def __init__(self, nodes):
+        self.nodes = nodes
+
 class DHT(object):
     '''This represents the Distributed Hash Table with its own queries'''
 
