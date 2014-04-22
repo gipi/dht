@@ -4,7 +4,7 @@ import json
 import bencode
 import random
 import socket
-from utils import hex2byte
+from utils import bt_nodes_info_from_raw_data, bt_contact_peer, hex2byte
 import logging
 from models import Node
 
@@ -99,6 +99,16 @@ class DHT(object):
         }
         logger.info('asking to \'%s\' for peers related to hash \'%s\'' % (node, info_hash))
         response = self.network.send_to_node(node, get_peers_query)
+
+        if not response:
+            return None
+
+        if response.has_key('nodes'):
+            return bt_nodes_info_from_raw_data(response['nodes'])
+        elif response.has_key('values'):
+            return [bt_contact_peer(x) for x in response['values']]
+        else:
+            raise ValueError('Unexpected response: ' + response)
 
     def find_node(self, _id, target):
         raise NotImplementedError('find_node is not implemented')

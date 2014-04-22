@@ -41,3 +41,6 @@ def bt_contact_peer(raw_data):
     node_port = int(raw_data[4:].encode('hex'), 16)
 
     return Peer(node_ip, node_port)
+
+def bt_nodes_info_from_raw_data(data):
+    return [bt_contact_node(x) for x in chunks(data, 26)]
