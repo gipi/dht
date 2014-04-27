@@ -80,12 +80,6 @@ class DHT(object):
         self.network = network
 
     def ping(self, _id):
-# Create ping query and bencode it.
-# "'y': 'q'" is for "query".
-# "'t': '0f'" is a transaction ID which will be echoed in the response.
-# "'q': 'ping'" is a query type.
-# "'a': {'id': my_id}" is arguments. In this case there is only one argument -
-# our node ID.
         ping_query = {'y': 'q',
                       't': '0f',
                       'q': 'ping',
