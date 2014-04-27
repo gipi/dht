@@ -1,5 +1,35 @@
 from models import Node, Peer
 
+def xor(a, b):
+    '''Calculates the XOR between two strings.
+    
+        >>> xor('\\x00', '\\x01')
+        '\\x01'
+    '''
+    return ''.join([chr(ord(x)^ord(y)) for (x,y) in zip(a, b)])
+
+def k(value):
+    '''Returns the zero-index of the bucket entry where this id should go.
+
+    For each 0 <= i < 160, every node keeps a list of info for nodes
+    of distance between 2^i and 2^i+1 (excluded) from itself.
+    
+        >>> k(16)
+        4
+        >>> k(0)
+        0
+        >>> k(1)
+        0
+        >>> k(2)
+        1
+        >>> k(2**159)
+        159
+    '''
+    # bits necessary to describe the value minus the '0b' prefix
+    b = bin(value)[2:]
+    # since is 0-indexed adjust the value correctly
+    return len(b) - 1
+
 def chunks(l, n):
     if n < 1:
         n = 1
