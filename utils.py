@@ -1,3 +1,6 @@
+'''
+Utilities to encode/decode raw data.
+'''
 from models import Node, Peer
 
 def xor(a, b):
