@@ -39,6 +39,14 @@ def chunks(l, n):
 def s2ip(data):
     return '.'.join([str(int(x.encode('hex'), 16)) for x in data])
 
+def byte2hex(data):
+    '''Returns the hex representation of raw string.
+
+        >>> byte2hex('\\x01\\x02\\x03\\x04')
+        '01020304'
+    '''
+    return ''.join(['%02x' % ord(x) for x in data])
+
 def hex2byte(data):
     '''Returns the raw bytes from an hex encoded string
     
