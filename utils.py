@@ -25,6 +25,8 @@ def k(value):
         >>> k(2**159)
         159
     '''
+    if isinstance(value, basestring):
+        value = int(value.encode('hex'), 16)
     # bits necessary to describe the value minus the '0b' prefix
     b = bin(value)[2:]
     # since is 0-indexed adjust the value correctly
