@@ -62,9 +62,85 @@ class PeerResponse(Response):
         '''peers is a list of peers'''
         self.peers = peers
 
-class NodeResponse(Response):
-    def __init__(self, nodes):
-        self.nodes = nodes
+class NodeResponse(list):
+    pass
+
+# inspired from a nodejs implementation
+#   https://github.com/feross/bittorrent-dht/blob/master/buckets.js
+class BucketList(object):
+    '''Contains the routing table of the DHT for a given node.
+    
+    It's the main point about DHT: allows to find a node in a
+    net of size 2^N in N steps.
+
+    The list contains entries ordered with respect to the XOR distance.
+    '''
+    BUCKET_SIZE = 20
+    ID_SPACE_LENGTH = 160
+    def __init__(self, node):
+        '''node is the reference node.'''
+        self.node = node
+        self.buckets = [
+            {'min':0, 'max': 2**self.ID_SPACE_LENGTH, 'nodes': []}
+        ]
+
+    def _insert(self, bucket):
+        index = 0
+        for b in self.buckets:
+            if b['min'] > bucket['min']:
+                break
+            index += 1
+
+        self.buckets.insert(index, bucket)
+
+    def _remove(self, bucket):
+        self.buckets.remove(bucket)
+
+    def _split(self, bucket):
+        self._remove(bucket)
+
+        _min = bucket['min']
+        _max = bucket['max']
+        _half = (_min + _max) / 2
+
+        first_half = {
+            'min': _min,
+            'max': _half,
+            'nodes': []
+        }
+        second_half = {
+            'min': _half,
+            'max': _max,
+            'nodes': []
+        }
+
+        for node in bucket['nodes']:
+            if node.id <= _half:
+                first_half['nodes'].append(node)
+            else:
+                second_half['nodes'].append(node)
+
+        self._insert(first_half)
+        self._insert(second_half)
+
+    def insert_node(self, node):
+        bucket = self.get(node)
+
+        if len(bucket['nodes']) == 8:
+            self._split(bucket)
+            self.insert_node(node)
+        else:
+            bucket['nodes'].append(node)
+
+    def get(self, node):
+        '''Return the list of nodes closer to the given one.'''
+        index = 0
+
+        while self.buckets.get(index)['min'] > node.id or self.buckets.get(index)['max'] <= node.id:
+            index += 1
+
+        return self.buckets.get(index)
+
 
 # www.rueckstiess.net/research/snippets/show/ca1d7d90
 def unwrap_self_f(arg, **kwarg):
