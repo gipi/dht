@@ -44,7 +44,7 @@ def bt_contact_node(raw_data):
     if len(raw_data) != 26:
         raise ValueError('data must be 26 bytes long')
 
-    node_id = raw_data[:20].encode('hex')
+    node_id = raw_data[:20]
     node_ip = s2ip(raw_data[20:24])
     node_port = int(raw_data[24:].encode('hex'), 16)
 
