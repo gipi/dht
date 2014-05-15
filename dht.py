@@ -133,12 +133,13 @@ class BucketList(object):
 
     def get(self, node):
         '''Return the list of nodes closer to the given one.'''
-        index = 0
 
-        while self.buckets.get(index)['min'] > node.id or self.buckets.get(index)['max'] <= node.id:
-            index += 1
 
-        return self.buckets.get(index)
+        for bucket in self.buckets:
+            if bucket['min'] <= node.id and bucket['max'] > node.id:
+                break
+
+        return bucket
 
 
 # www.rueckstiess.net/research/snippets/show/ca1d7d90
