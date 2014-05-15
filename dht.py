@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 import sys
-import json
 import bencode
 import random
 import socket
-from utils import bt_nodes_info_from_raw_data, bt_contact_peer, hex2byte
+from utils import (
+    hex2byte,
+    k,
+    xor,
+)
+from models import (
+    Node,
+    bt_nodes_info_from_raw_data,
+    bt_contact_peer,
+)
 import logging
 from multiprocessing import Process, Pool
-
-from models import Node
 
 
 stream = logging.StreamHandler()
@@ -152,24 +158,26 @@ class DHT(object):
     See <www.bittorrent.org/beps/bep_0003.html>
     '''
 
-    def __init__(self, network):
+    def __init__(self, network, node):
         self.network = network
+        self.core_node = node
+        self.buckets_list = BucketList()
 
-    def ping(self, _id):
+    def ping(self, node):
         ping_query = {'y': 'q',
                       't': '0f',
                       'q': 'ping',
-                      'a': {'id': _id}}
+                      'a': {'id': self.core_node.id}}
 
-        return self.network.send_to_node(Node.get_boostrap_node(), ping_query)
+        return self.network.send_to_node(node, ping_query)
 
-    def get_peers(self, _id, node, info_hash):
+    def get_peers(self, node, info_hash):
         get_peers_query = {
             'y': 'q',
             't': '0f',
             'q': 'get_peers',
             'a': {
-                'id': _id,
+                'id': self.core_node.id,
                 'info_hash': hex2byte(info_hash),
             }
         }
@@ -180,9 +188,9 @@ class DHT(object):
             return None
 
         if response.has_key('nodes'):
-            return bt_nodes_info_from_raw_data(response['nodes'])
+            return NodeResponse(bt_nodes_info_from_raw_data(response['nodes']))
         elif response.has_key('values'):
-            return [bt_contact_peer(x) for x in response['values']]
+            return PeerResponse([bt_contact_peer(x) for x in response['values']])
         else:
             raise ValueError('Unexpected response: ' + response)
 
@@ -212,9 +220,21 @@ if __name__ == "__main__":
     my_id = generate_random_id()
     print('id: ' + my_id.encode('hex'))
 
-    dht = DHT(Network)
+    mynode = Node(id=my_id, hostname='localhost')
+
+    dht = DHT(Network, mynode)
 
     info_hash = 'bbb6db69965af769f664b6636e7914f8735141b3' if len(sys.argv) == 1 else sys.argv[1]
 
+    node_info_hash = Node(id=hex2byte(info_hash), ip='fake')
 
-    dht.find_peers_for_infohash(my_id, info_hash)
+    bootstrap_node = Node.get_boostrap_node()
+    ping_response = dht.ping(bootstrap_node)
+    print('ping response: %s' % ping_response)
+
+    # save the bootstrap node's id
+    bootstrap_node.id = ping_response['id']
+
+    dht.buckets_list.insert_node(bootstrap_node)
+    node_to_query = dht.buckets_list.get(node_info_hash)['nodes'][0]
+    print(dht.get_peers(node_to_query, info_hash))
