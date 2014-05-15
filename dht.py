@@ -77,9 +77,8 @@ class BucketList(object):
     '''
     BUCKET_SIZE = 20
     ID_SPACE_LENGTH = 160
-    def __init__(self, node):
+    def __init__(self):
         '''node is the reference node.'''
-        self.node = node
         self.buckets = [
             {'min':0, 'max': 2**self.ID_SPACE_LENGTH, 'nodes': []}
         ]
