@@ -69,7 +69,8 @@ class PeerResponse(Response):
         self.peers = peers
 
 class NodeResponse(list):
-    pass
+    def __repr__(self):
+        return '[%s]' % ', '.join([unicode(x) for x in self])
 
 # inspired from a nodejs implementation
 #   https://github.com/feross/bittorrent-dht/blob/master/buckets.js
