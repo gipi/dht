@@ -19,7 +19,7 @@ class Node(object):
         return Node(hostname='router.bittorrent.com')
 
     def __unicode__(self):
-        return u'%s %s %d' % (self.id, self.ip, self.port)
+        return u'%s %s %d' % (byte2hex(self.id), self.ip, self.port)
 
     def __str__(self):
         return self.__unicode__()
