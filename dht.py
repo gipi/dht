@@ -225,6 +225,21 @@ class DHT(object):
 
         return nodes
 
+    def peers(self, info_hash):
+        '''Iterate updating the routing table.'''
+        nodes = self.buckets_list.get(Node(id=hex2byte(info_hash), hostname='localhost'))['nodes']
+        # get the first entry in the
+        dest_node = nodes[0]
+        # exception?
+        try:
+            result = self.get_peers(dest_node, info_hash)
+            # updating routing table with the nodes just returned
+            if isinstance(result, PeerResponse):
+                return result
+        except Exception as e:
+            logger.error(e)
+            return []
+
     def find_node(self, _id, target):
         raise NotImplementedError('find_node is not implemented')
 
