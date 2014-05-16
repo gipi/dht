@@ -207,20 +207,21 @@ class DHT(object):
         logger.info('asking to \'%s\' for peers related to hash \'%s\'' % (node, info_hash))
         response = self.network.send_to_node(node, get_peers_query)
 
+        # without response remove the node from the routing table
         if not response:
+            self.buckets_list.remove_node(node)
             return None
 
         nodes = None
         if response.has_key('nodes'):
             nodes = NodeResponse(bt_nodes_info_from_raw_data(response['nodes']))
+            # update the routing table
+            for n in nodes:
+                self.buckets_list.insert_node(n)
         elif response.has_key('values'):
             nodes = PeerResponse([bt_contact_peer(x) for x in response['values']])
         else:
             raise ValueError('Unexpected response: ' + response)
-
-        # update the routing table
-        for n in nodes:
-            self.buckets_list.insert_node(n)
 
         return nodes
 
