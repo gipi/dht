@@ -60,18 +60,15 @@ class Network(object):
             logger.error('error for query \'%s\'' % data)
             return r
 
-class Response(object):
+class Response(list):
     '''Base class for DHT network response'''
-    pass
-
-class PeerResponse(Response):
-    def __init__(self, peers):
-        '''peers is a list of peers'''
-        self.peers = peers
-
-class NodeResponse(list):
     def __repr__(self):
         return '[%s]' % ', '.join([unicode(x) for x in self])
+
+class PeerResponse(Response):
+    pass
+class NodeResponse(Response):
+    pass
 
 # inspired from a nodejs implementation
 #   https://github.com/feross/bittorrent-dht/blob/master/buckets.js
