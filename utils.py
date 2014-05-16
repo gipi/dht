@@ -59,3 +59,6 @@ def hex2byte(data):
     '''
     return ''.join([chr(int(x, 16)) for x in chunks(data, 2)])
 
+def byte2int(data):
+    return int(byte2hex(data), 16)
+

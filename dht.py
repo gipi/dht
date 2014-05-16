@@ -5,6 +5,7 @@ import random
 import socket
 from utils import (
     hex2byte,
+    byte2int,
     k,
     xor,
 )
@@ -121,7 +122,7 @@ class BucketList(object):
         }
 
         for node in bucket['nodes']:
-            if node.id <= _half:
+            if byte2int(node.id) <= _half:
                 first_half['nodes'].append(node)
             else:
                 second_half['nodes'].append(node)
