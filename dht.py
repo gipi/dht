@@ -138,6 +138,13 @@ class BucketList(object):
     def insert_node(self, node):
         bucket = self.get(node)
 
+        try:
+            bucket['nodes'].remove(node)
+            bucket['nodes'].append(node)
+        except ValueError:
+            self.__insert_node_not_present(bucket, node)
+
+    def __insert_node_not_present(self, bucket, node):
         if len(bucket['nodes']) == 8:
             self._split(bucket)
             self.insert_node(node)
