@@ -263,6 +263,10 @@ if __name__ == "__main__":
     ping_response = dht.ping(bootstrap_node)
     print('ping response: %s' % ping_response)
 
+    if ping_response is None:
+        print('no response, exit')
+        sys.exit(1)
+
     # save the bootstrap node's id
     bootstrap_node.id = ping_response['id']
 
