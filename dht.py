@@ -286,5 +286,5 @@ if __name__ == "__main__":
     bootstrap_node.id = ping_response['id']
 
     dht.buckets_list.insert_node(bootstrap_node)
-    node_to_query = dht.buckets_list.get(node_info_hash)['nodes'][0]
-    print(dht.get_peers(node_to_query, info_hash))
+    while 1:
+        print(dht.peers(info_hash))
