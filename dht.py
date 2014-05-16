@@ -127,6 +127,14 @@ class BucketList(object):
         self._insert(first_half)
         self._insert(second_half)
 
+    def _join(self, bucket):
+        self._remove(bucket)
+
+        for b in self.buckets:
+            if b['min'] > bucket['min']:
+                b['min'] = bucket['min']
+                break
+
     def insert_node(self, node):
         bucket = self.get(node)
 
@@ -135,6 +143,15 @@ class BucketList(object):
             self.insert_node(node)
         else:
             bucket['nodes'].append(node)
+
+    def remove_node(self, node):
+        bucket = self.get(node)
+        nodes = bucket['nodes']
+
+        nodes.remove(node)
+
+        if len(nodes) == 0:
+            self._join(bucket)
 
     def get(self, node):
         '''Return the list of nodes closer to the given one.'''
