@@ -189,12 +189,19 @@ class DHT(object):
         if not response:
             return None
 
+        nodes = None
         if response.has_key('nodes'):
-            return NodeResponse(bt_nodes_info_from_raw_data(response['nodes']))
+            nodes = NodeResponse(bt_nodes_info_from_raw_data(response['nodes']))
         elif response.has_key('values'):
-            return PeerResponse([bt_contact_peer(x) for x in response['values']])
+            nodes = PeerResponse([bt_contact_peer(x) for x in response['values']])
         else:
             raise ValueError('Unexpected response: ' + response)
+
+        # update the routing table
+        for n in nodes:
+            self.buckets_list.insert_node(n)
+
+        return nodes
 
     def find_node(self, _id, target):
         raise NotImplementedError('find_node is not implemented')
