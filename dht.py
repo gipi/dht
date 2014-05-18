@@ -222,6 +222,9 @@ class DHT(object):
                 self.buckets_list.insert_node(n)
         elif response.has_key('values'):
             nodes = PeerResponse([bt_contact_peer(x) for x in response['values']])
+            # if the node gives me peers then update it in the
+            # routing table (will be placed as last in its bucket)
+            self.buckets_list.insert_node(node)
         else:
             raise ValueError('Unexpected response: ' + response)
 
