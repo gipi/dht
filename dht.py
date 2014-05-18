@@ -164,11 +164,13 @@ class BucketList(object):
         '''Return the list of nodes closer to the given one.'''
 
 
+        found = None
         for bucket in self.buckets:
-            if bucket['min'] <= node.id and bucket['max'] > node.id:
+            if bucket['min'] <= byte2int(node.id) and bucket['max'] > byte2int(node.id):
+                found = bucket
                 break
 
-        return bucket
+        return found
 
 
 # www.rueckstiess.net/research/snippets/show/ca1d7d90
