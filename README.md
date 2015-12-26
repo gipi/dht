@@ -1,5 +1,4 @@
-DISTRIBUTED HASH TABLE
-----------------------
+# DISTRIBUTED HASH TABLE
 
 DHT is composed of three main components
 
@@ -7,8 +6,7 @@ DHT is composed of three main components
  - keyspace partioning
  - overlay network
 
-CODE
-----
+## CODE
 
 For now there is only a script ``dht.py`` that can be used to bootstrap
 a client into a ``DHT`` network (in this case we use the bittorrent).
