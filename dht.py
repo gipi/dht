@@ -35,6 +35,8 @@ class Network(object):
     def send_to_node(klass, node, data):
         data_bencoded = bencode.bencode(data)
 
+        logger.debug('data sent: %s' % data)
+
         # Send a datagram to a server and recieve a response.
         s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
         s.settimeout(10)
@@ -53,6 +55,8 @@ class Network(object):
         except bencode.BTL.BTFailure:
             logger.error('response not bencoded: \'%s\'' % r[0])
             return None
+
+        logger.debug('data received %s' % r)
 
         if r.has_key('r'):
             return r['r']
@@ -242,7 +246,7 @@ class DHT(object):
             if isinstance(result, PeerResponse):
                 return result
         except Exception as e:
-            logger.error(e)
+            logger.error(e, exc_info=True)
             return []
 
     def find_node(self, _id, target):
@@ -291,5 +295,6 @@ if __name__ == "__main__":
     bootstrap_node.id = ping_response['id']
 
     dht.buckets_list.insert_node(bootstrap_node)
+    logger.info('start while')
     while 1:
         print(dht.peers(info_hash))
